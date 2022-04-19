@@ -132,6 +132,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: my-artifact
+        path: .next/
     - name: Display structure of downloaded files
       run: ls -R  
     # - uses: actions/cache@v3
