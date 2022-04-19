@@ -111,9 +111,13 @@ jobs:
         cache: 'npm'
     - name: Install
       run: npm ci --production
+    - uses: actions/upload-artifact@v3
+      with:
+        name: production-modules
+        path: .node_modules
 
   dockerbuild:
-    needs: build
+    needs: [build, production-install]
 
     runs-on: ubuntu-20.04
 
@@ -121,5 +125,8 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: my-artifact
+    - uses: actions/download-artifact@v3
+      with:
+        name: production-modules
     - name: Docker build
       run: docker build .
