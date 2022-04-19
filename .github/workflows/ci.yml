@@ -62,6 +62,10 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
     - run: npm run build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: my-artifact
+        path: .next
 
   lint:
     needs: install
@@ -107,3 +111,15 @@ jobs:
         cache: 'npm'
     - name: Install
       run: npm ci --production
+
+  dockerbuild:
+    needs: build
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: my-artifact
+    - name: Docker build
+      run: docker build .
