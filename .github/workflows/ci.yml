@@ -135,14 +135,14 @@ jobs:
         path: .next/
     - name: Display structure of downloaded files
       run: ls -R  
-    # - uses: actions/cache@v3
-    #   id: cache
-    #   with:
-    #     path: |
-    #       ~/.npm
-    #       ./node_modules
-    #     key: ${{ runner.os }}-production-${{ hashFiles('**/package-lock.json') }}
-    #     restore-keys: |
-    #       ${{ runner.os }}-production-
-    # - name: Docker build
-    #   run: docker build .
+    - uses: actions/cache@v3
+      id: cache
+      with:
+        path: |
+          ~/.npm
+          ./node_modules
+        key: ${{ runner.os }}-production-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-production-
+    - name: Docker build
+      run: docker build .
