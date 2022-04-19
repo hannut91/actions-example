@@ -109,15 +109,21 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Install
-      run: npm ci --production
-    - uses: actions/upload-artifact@v3
+    - uses: actions/cache@v3
+      id: cache
       with:
-        name: production-modules
-        path: node_modules
+        path: |
+          ~/.npm
+          ./node_modules
+        key: ${{ runner.os }}-production-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-production-
+    - name: Install
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci --production
 
   dockerbuild:
-    needs: [build, production-install]
+    needs: [build]
 
     runs-on: ubuntu-20.04
 
@@ -125,8 +131,14 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: my-artifact
-    - uses: actions/download-artifact@v3
+    - uses: actions/cache@v3
+      id: cache
       with:
-        name: production-modules
+        path: |
+          ~/.npm
+          ./node_modules
+        key: ${{ runner.os }}-production-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-production-
     - name: Docker build
       run: docker build .
